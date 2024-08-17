@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="joli.css">
+    <title>Chat en temps réel avec Socket.io</title>
+</head>
+<body>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        const socket = io();
+    </script>
+    <div id="imposteur"></div>
+    <div id="a supprimer">
+        <input id="salam">
+        <button onclick="demarcher()" class="allow">envoyer</button>
+    </div>
+    <script id="choisir un pseudo">
+        let v=''
+        
+        function donnetavaleur(n){
+            return n
+        }
+        
+        async function demarcher(){
+           /* socket.emit('ve')
+            let v = await new Promise((resolve) => {
+                socket.on('val', (value) => {
+                    resolve(value);
+                });
+            });*/
+
+            if (/*v === true &&*/ document.getElementById('salam').value !== ""){
+                const salam = document.getElementById('salam')
+                const valeur = salam.value
+                document.getElementById('a supprimer').innerHTML = '';
+                socket.emit('pseudo', valeur)
+               
+            }
+        }
+    </script>
+    
+    <button onclick="Tù(1,'a')" class="allow">rejoindre t1</button>
+    <button onclick="Tù(0,'b')" class="allow">rejoindre t2</button>
+    <table id="sktt1">
+        <thead>
+            <tr>
+                <th>T1</th>
+            </tr>
+        </thead>
+        <tbody id="T1">
+        </tbody>
+    </table>
+
+    <table id="sktt0">
+        <thead>
+            <tr>
+                <th>T2</th>
+            </tr>
+        </thead>
+        <tbody id="T0">
+            <td></td>
+        </tbody>
+    </table>
+
+    <script id="rejoindre team 1"> 
+        let t = 0
+        let rejoin = ''
+        let teamate = ''
+        let uy
+        let supprimer
+        let supprimer2
+        let salamé
+        let fiss
+        let rog
+        let ido = socket.id
+        let ta = 1
+        
+
+        async function Tù(h,l,reco){
+        console.log(reco)
+            socket.emit('vt',h,reco)
+            let verif = await new Promise((resolve) => {
+                socket.on('val2', (value) => {
+                    resolve(value);
+                });
+            });
+        
+            if (verif === true){
+                console.log('terrestere')
+                socket.emit('conn',h)
+                await new Promise((resolve) => {
+                    socket.on('cringe', (tera, pseudo) => {
+                        socket.po = tera
+                        socket.po2 = pseudo
+                        resolve(tera);
+                    });
+                });
+
+                ido = socket.id
+                console.log('tereza')
+                console.log(socket.po)
+                console.log(reco)
+                if(socket.po !== true || reco==='reco'){
+                    console.log("jerajoute")
+                    socket.emit('t12', h,reco);
+                    rejoin = await new Promise((resolve) => {
+                        socket.on('rej', (value, tn) => {
+                            ido = socket.id
+                            ta = tn
+                            console.log(ta)
+                            resolve(value);
+                        });
+                    });
+
+                    await new Promise((resolve) => {
+                        console.log(rejoin, h, l, ido, ta)
+                        lameme('rajoutep', rejoin, h, l, ido, ta)
+                        socket.on('cfait', (tru, v) => {
+                            rog = v
+                            resolve(tru)
+                        })
+                    })
+                    .then(() => {
+                        console.log('save')
+                        socket.emit('saveteamate', l, rog)
+                    })
+                }
+
+                else{
+                    console.log(0)
+                    socket.emit('recup')
+                    await new Promise((resolve) => {
+                        socket.on('recap', (p, s, tn) => {
+                            uy = p
+                            supprimer = s
+                            ta = tn
+                            resolve(p, s)
+                            console.log(uy)
+                            console.log(supprimer)
+                        })
+                    })
+
+                    await new Promise((resolve) => {
+                        lameme('dejadansuneequipe', socket.po2, h, l, uy, supprimer, ido, ta)
+                        socket.on('cfait', (tru) => {
+                            resolve(tru)
+                        })
+                    })
+                    socket.emit('qt', `T${h}`, `${uy}`, supprimer2,ta)
+                } 
+           
+                
+            }
+        }
+ 
+        async function dejadansuneequipe(pseudo, h, l, uy, supprimer, ido, ta){
+            let suppression = document.getElementById(supprimer)
+            let malv = document.getElementById(uy)
+            console.log(uy)
+
+            if (malv.parentNode.parentNode.id !== `T${h}`){
+                let chgt = malv.parentNode.removeChild(malv)
+                suppression.remove()
+                salamé = document.createElement(`tr`)
+                salamé.id = `teamate${l}${ta}`
+                supprimer2 = salamé.id
+                let element = document.getElementById(`T${h}`)
+                element.appendChild(salamé)
+                salamé.appendChild(chgt)
+               
+                ta++
+
+                if (ido === socket.id){
+                    socket.contenu = salamé.id
+                    console.log(socket.contenu)
+                    socket.emit('resolue', h, document.getElementById(`sktt1`).innerHTML, document.getElementById(`sktt0`).innerHTML, ta)
+                }
+            }
+        }
+
+        async function lameme(f, a1, a2, a3, a4, a5, a6, a7){
+            socket.emit('racket', f, a1, a2, a3, a4, a5, a6, a7)
+        }
+
+        async function apparition (){
+        }  
+
+        function rajoutep(rejoin, h, l, ido, tx){
+            console.log(tx)
+            const TH = document.getElementById(`T${h}`)
+            const player = document.createElement('tr')
+            TH.appendChild(player)
+            player.id = `teamate${l}${tx}`
+            let teamate = document.getElementById(`teamate${l}${tx}`)
+            let tea = document.createElement('td')
+            teamate.appendChild(tea)
+            tea.id = `t${l}${tx}`
+           
+
+            let teael = document.getElementById(`t${l}${tx}`)
+            teael.innerHTML = rejoin 
+
+            if (ido === socket.id){
+                socket.contenu = `teamate${l}${tx}`
+                console.log(socket.contenu)
+                socket.emit('resolue', h, document.getElementById(`sktt1`).innerHTML, document.getElementById(`sktt0`).innerHTML, tx)
+            }
+        }
+    </script>   
+</body>
+<script id="ini">
+    window.addEventListener('beforeunload', async () => {
+        socket.emit('savetab','temps',socket.imparti)
+        console.log(socket.contenu)
+        document.getElementById(socket.contenu).remove()
+        socket.emit('disconnecting2', document.getElementById('sktt1').innerHTML, document.getElementById('sktt0').innerHTML);
+        socket.emit('bjr',socket.imparti,'yoyoyo');
+        
+    });
+socket.on('t',async ()=>{
+
+})
+    async function activation(){
+        socket.on('maj', (table, cable) => {
+            let loutre = document.getElementById(`sktt1`)
+            let coutre = document.getElementById(`sktt0`)
+            loutre.innerHTML = table
+            coutre.innerHTML = cable
+            socket.emit('omaewa', loutre.innerHTML, coutre.innerHTML, table, cable)
+            socket.emit('biencommun', loutre.innerHTML, coutre.innerHTML)
+        })
+
+        socket.on('falldo', (f, a1, a2, a3, a4, a5, a6, a7) => {
+            window[f](a1, a2, a3, a4, a5, a6, a7)
+        })
+
+        socket.on('T1', () => {
+            console.log('rarararar')
+            Tù(1,'a','reco')
+        })
+
+        socket.on('T0', (team, teamate) => {
+            Tù(0,'b','reco')
+        })
+
+        socket.on(socket.id, () => {
+
+        })
+
+        socket.on('imposteur', () => {
+            console.log('aaaaaaaaaaaaaaaaaaaaaaa')
+            document.getElementById('enroler').innerHTML ='ton but est de perdre la partie,tes\
+             points seront attribués en fonction du nombre de personne qui ont découvert ton role \
+             donc réfléchi a deux fois avant d entreprendre une aciton<br>conseil:essaie de te \
+             faire passer pour un autre role tout en essayant de perdre'
+            document.getElementById('role').innerHTML = 'imposteur';
+            const imageContainer = document.getElementById('imposteur');
+          //  imageContainer.innerHTML = `<img src=""  style="width: 300px; height: auto;" alt="Image">`;
+        })
+
+        socket.on('serpentin', () => {
+            console.log('fdsqqqqqqqqqqqqqqqq')
+            document.getElementById('role').innerHTML = 'serpentin'
+            document.getElementById('enroler').innerHTML ="ton but est de gagner la partie et \
+            pour avoir des points bonus tu dois avoir le plus de morts et de degats"
+            const imageContainer = document.getElementById('serpentin');
+            //imageContainer.innerHTML = `<img src=""  style="width: 300px; height: auto;" alt="Image">`;
+        })
+
+        socket.on('doubleface', (mele) => {
+            
+            document.getElementById('listordre').innerHTML=mele
+            document.getElementById('role').innerHTML = 'doubleface'
+            const imageContainer = document.getElementById('imposteur');
+            document.getElementById('enroler').innerHTML = 'ton but est de gagner ou de \
+            perdre en fonction des ordres que tu vas recevoir'
+            //imageContainer.innerHTML = `<img src=""  style="width: 300px; height: auto;" alt="Image">`;
+        })
+
+        socket.on('droide', (mele) => {
+            document.getElementById('listordre').innerHTML=mele
+            document.getElementById('role').innerHTML = 'droide'
+            document.getElementById('enroler').innerHTML ='ton but est de gagner la partie \
+            tout en suivant les ordres qui te seront envoyés.Les ordres sont en général a \
+            executer le plus tot possible'
+            const imageContainer = document.getElementById('imposteur');
+            //imageContainer.innerHTML = `<img src=""  style="width: 300px; height: auto;" alt="Image">`;
+        })
+
+        socket.on('superhero', () => {
+            const imageContainer = document.getElementById('imposteur');
+            document.getElementById('role').innerHTML = 'superhero'
+            document.getElementById('enroler').innerHTML ='ton but est de gagner la partie et pour avoir des\
+             points bonus tu dois avoir le meilleur kp(kp=kill+assist )<br>exemple pour les demeurer 5/3/6 \
+             kp=5kills +6assists=11 qui est donc superieur a 10/0/0 dont le kp=10'
+           // imageContainer.innerHTML = `<img src=""  style="width: 300px; height: auto;" alt="Image">`;
+        })
+
+        socket.on('romeo', () => {
+            const imageContainer = document.getElementById('imposteur');
+            document.getElementById('role').innerHTML = 'romeo'
+            document.getElementById('enroler').innerHTML ='ton but est de gagner et de partir mourir \
+            instantanement des que ta juliette meurt .Le seul moment ou tu ne dois pas te sucider \
+            c est quand tu es mort et que ta juliette meurt pendant ce moment '
+            //imageContainer.innerHTML = `<img src=""  style="width: 300px; height: auto;" alt="Image">`;
+        })
+
+        socket.on('avance',(d,titre)=>{
+            document.getElementById(titre).innerHTML=d
+        })
+        socket.on('resultat',(chacal)=>{
+            console.log('malveillance')
+            
+            let resultat=document.createElement('table')
+            let thead=document.createElement('thead')
+            let tr0=document.createElement('tr')
+            let poi=document.getElementById('class')
+            poi.appendChild(resultat)
+            resultat.appendChild(thead)
+            thead.appendChild(tr0)
+            tr0.innerHTML='classement'
+            let tbody=document.createElement('tbody')
+            resultat.appendChild(tbody)
+            for(const chac of chacal){
+
+                let choc=document.createElement('tr')
+                choc.innerHTML=`${chac.pseudo}.  ${chac.point}`
+                tbody.appendChild(choc)
+
+            }
+            
+        })
+
+        socket.on('mele',(nv,db,rm)=>{
+            console.log('passage reussi')
+            if (document.getElementById('listordre').innerHTML.includes(nv)){
+                console.log('c deja fait')
+            }
+            else{
+        console.log(nv)
+        console.log('chapapa')
+        if(rm===true){
+            document.getElementById('listordre').innerHTML=nv
+        }
+        else{
+        document.getElementById('listordre').innerHTML=nv.slice(0,-4)
+        socket.emit('savetab','lapin', document.getElementById('listordre').innerHTML)
+        const parle = document.getElementById("audio");
+        console.log(db)
+        if(typeof(db)==='number'){
+            console.log('c est un nombre')
+            let mc=nv/1000
+            console.log(nv)
+            parle.setAttribute('src', `ordre/${nv}.mp3`);
+            document.getElementById('listordre').innerHTML=`${nv}+${db}min`
+        }
+        else{
+            parle.setAttribute('src', `ordre/${nv}`);
+        }
+       
+        const audioPlayer = document.getElementById("audioPlayer");
+        const audioPlayer0 = document.getElementById("audioPlayer0");
+        audioPlayer0.load();
+        audioPlayer0.play();
+        audioPlayer0.onended=()=>{audioPlayer.load()
+        audioPlayer.play()
+        }
+        }
+        }
+        })
+        
+        socket.on('gros',()=>{
+            socket.notok=true
+            console.log('remise a zero')
+            socket.imparti=0
+            chrono(0,socket)
+        })
+        socket.on('stomp',(f)=>{
+            socket.notok=false
+                
+                console.log(socket.trynda)
+            clearTimeout(socket.trynda);
+            console.log('timerstopper')
+            console.log(f)
+          
+            
+        })
+       
+    }
+socket.imparti=0
+socket.notok=true
+    function chrono(k,socket){ 
+    if (socket.notok===true){
+   console.log(socket.id)
+   socket.imparti+=k
+   console.log(socket.imparti)
+   socket.trynda=setTimeout(() => {
+       chrono(2000,socket)
+}, 2000);
+        }
+}
+    let y = 0
+    activation()
+
+   
+</script>
+<div id="test3">
+    <tbody></tbody>
+</div>
+<audio controls id="audioPlayer0" name="audible"> 
+    <source src="Tuturu_sound_effect.mp3" type="audio/mp3" id="audio0">
+</audio>
+<audio controls id="audioPlayer" name="audible"> 
+    <source src="" type="audio/mp3" id="audio">
+</audio>
+<button onclick="droideaudio()">jk</button>
+<script id="bard">
+    let stop=false
+    function droideaudio() {
+        if (stop===false){
+            console.log('troll')
+            stop=true
+            socket.emit('bard',stop)
+            
+        }
+        else{
+            console.log('trall')
+            stop=false
+            socket.emit('bard',stop)
+        
+        }
+        
+     
+      
+       
+    }
+</script>
+
+<div id="role">
+    fdsfdsfsdfsd
+</div>
+<div id="lancerlapartie"><button onclick="lancer()" >lancer la partie</button></div>
+
+<script id="reco">
+    async function lancer() {
+        socket.emit('nb');
+        let rak = await new Promise((resolve) => {
+            socket.on('enough', (g) => {
+                resolve(g);
+            });
+        });
+        if (rak === true) {
+            assignation();
+        }
+        document.getElementById('lancerlapartie').innerHTML=""
+    }
+
+    let i = 3;
+    let k = 0;
+
+    async function assignation() {  
+        socket.emit('giverole', true);
+    }
+
+    socket.on('message', (g,h) => {
+        creationtab(h)
+    });
+</script>
+
+<div id="validation"></div>
+<table id="dab">
+    <thead >
+<tr id="gen">
+    <th></th>
+
+
+</tr>
+
+    </thead>
+    <tbody id="ayaya">
+
+
+    </tbody>
+</table>
+<div id="parametre"></div>
+<script id="ryu">
+    //on peut faire avec un defilement mais j ai envie de le faire avec un tableau
+    let identityu=['imposteur','serpentin','superhero','doubleface','roméo','droide']
+
+async function creationtab(h){
+  
+    let validation =document.createElement('button')
+    document.getElementById("validation").appendChild(validation)
+    validation.setAttribute("onclick",`acri(${h})`)
+    validation.innerText='valider'
+
+    let rempli =document.createElement('button')
+    document.getElementById("validation").appendChild(rempli)
+    rempli.setAttribute("onclick",`delu(${h})`)
+    rempli.innerText='repartition'
+    
+
+   socket.emit('jt',h)
+  let hequipe= await new Promise((resolve)=>{
+    socket.on('gh',(equipe)=>{
+        resolve(equipe.map(el=>el.pseudo))
+    })  
+   
+})
+let parametre=document.getElementById('parametre')
+let etiq=document.createElement('label')
+etiq.setAttribute("for","deroulement")
+etiq.innerHTML='meilleur kp'
+
+    let deroule=document.createElement('select')
+    deroule.id='deroulement'
+    parametre.appendChild(etiq)
+    parametre.appendChild(deroule)
+
+    let etiq1=document.createElement('label')
+etiq1.setAttribute("for",`deroulement1`)
+etiq1.innerHTML='le plus de morts'
+    let deroule1=document.createElement('select')
+    deroule1.id='deroulement1'
+    parametre.appendChild(etiq1)
+    parametre.appendChild(deroule1)
+   
+    //modifiable
+for (let head=0;head<5;head++){
+    console.log(hequipe)
+    let ahead=document.createElement('th')
+            ahead.id=`${head}`
+            ahead.innerHTML=hequipe[head]
+        
+            document.getElementById('gen').appendChild(ahead)
+
+            let option=document.createElement(`option`)
+            option.id=`${head}opt`
+            option.innerHTML=hequipe[head]
+            
+            let option1=document.createElement(`option`)
+            option1.id=`${head}opt1`
+            option1.innerHTML=hequipe[head]
+            
+            deroule.appendChild(option)
+            deroule1.appendChild(option1)
+}
+ for (let r=0;r<6;r++){
+     let row=document.createElement('tr')
+            row.id=`${r}`
+          
+            document.getElementById('ayaya').appendChild(row)
+            let dline= document.createElement('td')
+            row.appendChild(dline)
+            dline.innerHTML=identityu[r]
+            //modifiable
+        for (let id=0;id<5;id++){
+            let line= document.createElement('td')
+            let checkbox=document.createElement('input')
+            checkbox.id=`${r}${id}` 
+            checkbox.setAttribute("name",`checkbox${id}`)
+            checkbox.setAttribute("type","checkbox")
+            checkbox.addEventListener('change',()=>{
+                    selection(id,r)
+            })
+            row.appendChild(line)
+            line.appendChild(checkbox)
+        }
+    }
+  
+    socket.emit('savetab','validation',document.getElementById('validation').innerHTML)
+    socket.emit('savetab','disco',document.getElementById('dab').innerHTML)
+    socket.emit('savetab','macro',document.getElementById('parametre').innerHTML)
+}
+
+ async function acri(h){
+    document.getElementById('validation').innerHTML=""
+    //modifiable
+    for (let p=0;p<5;p++){
+        for (let r=0;r<6;r++){
+            
+            let acro=document.getElementById(`${r}${p}`)
+            if(acro.checked===true){
+                socket.emit('elu',p,r,h)
+                
+            }
+
+        }
+    }
+}
+async function delu(h){
+    console.log('desilusion')
+socket.emit('delu',document.getElementById("deroulement").value,document.getElementById("deroulement1").value,h)
+}
+async function selection(c,r){
+    console.log(c,r)
+    let oneon=document.getElementsByName(`checkbox${c}`)
+    console.log(oneon)
+    let threeon=Array.from(oneon)
+    let twon=threeon.map(dlc=>dlc.checked)
+    console.log(twon)
+    let tu=await f(twon)
+    if(tu===2){
+    for (let yu in twon){
+        console.log(yu,r)
+        if (Number(yu)!==Number(r)){
+        if (twon[yu]===true){
+            console.log(yu,c)
+            console.log(document.getElementById(`${yu}${c}`))
+            document.getElementById(`${yu}${c}`).checked=false
+
+        }
+       
+        
+    }}}
+
+    }
+    
+
+
+function f(twon){
+    let compte=0
+for (let k of twon){
+    if(k==true){
+        compte+=1
+    }
+
+}
+return compte
+}
+</script>
+<div id="audiote">
+    <button onclick="audiotest()" id="controle" class="allow">demarer</button>
+    <input type="range" min="0" max="1" step="0.1" id="volumecontrol">
+    <audio id="audiotest" name="audible"> <source src="Rick Astley - Never Gonna Give You Up (Official Music Video).mp3" type="audio/mp3"/></audio>
+</div>
+<script>
+    document.getElementById("volumecontrol").addEventListener('input',()=>{
+    document.getElementsByName("audible")[1].volume = document.getElementById("volumecontrol").value
+    document.getElementsByName("audible")[0].volume = document.getElementById("volumecontrol").value
+    document.getElementsByName("audible")[2].volume = document.getElementById("volumecontrol").value
+    })
+function audiotest(){
+    if (document.getElementById('audiotest').paused){
+     
+    document.getElementById('audiotest').play()
+    document.getElementById('controle').innerText="stop"
+    }
+    else{
+        document.getElementById('audiotest').pause()
+        document.getElementById('controle').innerText="continuer"
+    }
+
+}
+
+document.getElementById('audiotest').load()
+
+function gagnant(){
+    socket.emit('gagnant')
+    document.getElementById('gagnant').innerHTML=''
+}
+</script>
+<button onclick=" droideaudio()">commencer la partie</button>
+
+<button onclick="hello()">hello</button>
+<script>
+function hello (){
+    console.log('hello')
+    socket.emit('clear')
+    etiq1.setAttribute("for",`deroulement1`)
+etiq1.innerHTML='le plus de morts'
+}
+
+</script>
+<div id="class"></div>
+<div id="listordre"></div>
+<div id="enroler"> </div>
+<div id="gagnant">
+    <button onclick="gagnant()" id="gomme">team gagnant</button>
+</div>
+
+</html>
